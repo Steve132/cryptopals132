@@ -27,7 +27,7 @@ int main(int argc,char** argv)
 	
 	std::fill(z.begin(),z.end(),std::byte{selected_key});
 	cp::bytes result=a ^ z;
-	std::cout << selected_key << ": " << cp::printable(result) << std::endl;
+	std::cout << selected_key << ": " << cp::to_printable(result) << std::endl;
 	
 	return 0;
 }

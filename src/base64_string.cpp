@@ -1,4 +1,5 @@
 #include "base64_string.hpp"
+#include <algorithm>
 using namespace cp;
 
 const std::string base64_string::alphabet="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -22,9 +23,14 @@ std::array<std::byte,256> base64_string::build_invalpha()
 
 base64_string::operator bytes() const
 {
-	size_t num_chars=std::string::size();
-	num_chars-=(*std::string::crbegin()=='=') ? 1 : 0;
-	num_chars-=(*(std::string::crbegin()+1)=='=') ? 1 : 0;
+	std::string copythis(std::string::begin(),std::string::end());
+	
+	auto newit=std::remove_if(copythis.begin(),copythis.end(),[](char ch){ return isspace(ch); });
+	copythis.resize(newit-copythis.begin());
+	
+	size_t num_chars=copythis.size();
+	num_chars-=(*copythis.crbegin()=='=') ? 1 : 0;
+	num_chars-=(*(copythis.crbegin()+1)=='=') ? 1 : 0;
 	
 	size_t num_bytes=(num_chars*3)/4;
 	
@@ -38,7 +44,7 @@ base64_string::operator bytes() const
 		for(size_t c=0;c<4;c++)
 		{
 			v<<=6;
-			v|=(uint32_t)ia[operator[](ci++)] & 0x3F;
+			v|=(uint32_t)ia[copythis[ci++]] & 0x3F;
 		}
 		for(size_t bi=0;bi<3;bi++)
 		{
@@ -94,7 +100,10 @@ base64_string::base64_string(const std::string_view& s):std::string(s)
 	bool result=(s.size() % 4)!=1;
 	for(unsigned int i=0;i<s.size();i++)
 	{
-		result=result && (ia[s[i]]!=std::byte{0xFF});
+		if(!std::isspace(s[i]))
+		{
+			result=result && (ia[s[i]]!=std::byte{0xFF});
+		}
 	}
 	if(!result) throw std::runtime_error(std::string("'")+*this+"' is not a base64 string!");
 }

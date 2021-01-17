@@ -14,3 +14,9 @@ target_link_libraries(s1_03 cryptopals132)
 
 add_executable(s1_04 s1_04.cpp)
 target_link_libraries(s1_04 cryptopals132)
+
+add_executable(s1_05 s1_05.cpp)
+target_link_libraries(s1_05 cryptopals132)
+
+add_executable(s1_06 s1_06.cpp)
+target_link_libraries(s1_06 cryptopals132)

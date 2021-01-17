@@ -60,6 +60,25 @@ void sort(InputOutputIt1 be,InputOutputIt1 ed,KeyFunc kf,KeyCompFunc kcf=KeyComp
 }
 
 template<
+class InputOutputIt1,
+class KeyFunc,
+class KeyCompFunc=std::less<
+std::invoke_result_t<KeyFunc,typename std::iterator_traits<InputOutputIt1>::reference>
+>
+>
+void nth_element(InputOutputIt1 be,InputOutputIt1 nth,InputOutputIt1 ed,KeyFunc kf,KeyCompFunc kcf=KeyCompFunc())
+{
+	key_compare_context kcc(be,ed,kf,kcf);
+	size_t n=(nth-be);
+	std::nth_element(kcc.ids.begin(),kcc.ids.begin()+n,kcc.ids.end(),kcc.comparator());
+	std::vector<typename std::iterator_traits<InputOutputIt1>::value_type> cpval(be,ed);
+	for(size_t k:kcc.ids)
+	{
+		*be++ = cpval[k];
+	}
+}
+
+template<
 	class InputIt,
 	class KeyFunc,
 	class KeyCompFunc=std::less<
